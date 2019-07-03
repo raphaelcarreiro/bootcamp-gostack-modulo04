@@ -1,11 +1,29 @@
 import React, { Component } from "react";
 import App from "../App";
+import TechItem from "./TechItem";
 
 class TechList extends Component {
   state = {
     newTech: "",
-    techs: ["NodeJs", "ReactJs", "React Native"]
+    techs: []
   };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.techs !== this.state.techs) {
+      localStorage.setItem("techs", JSON.stringify(this.state.techs));
+    }
+  }
+
+  componentDidMount() {
+    const techs = localStorage.getItem("techs");
+    if (techs) {
+      this.setState({
+        techs: JSON.parse(techs)
+      });
+    }
+  }
+
+  componentWillUnmount() {}
 
   handleInputChange = e => {
     this.setState({
@@ -31,10 +49,11 @@ class TechList extends Component {
       <>
         <ul>
           {this.state.techs.map(tech => (
-            <li key={tech}>
-              {tech}
-              <button onClick={() => this.handleClick(tech)}>Remover</button>
-            </li>
+            <TechItem
+              key={tech}
+              tech={tech}
+              onDelete={() => this.handleClick(tech)}
+            />
           ))}
         </ul>
         <form onSubmit={this.handleSubmit}>
